@@ -65,6 +65,19 @@ public class PanDetailsController {
 		}
 
 	}
+	@RequestMapping(value="getAccountByPanNumber/{panNumber}",method = RequestMethod.GET)
+	ResponseEntity<ResponsePanDetails> getPanDetailsByPanNumber(@PathVariable String panNumber){
+		PanDetails pd=ps.findPanDetailsByPanNumber(panNumber);
+		return pd!=null?new ResponseEntity<>(convertPanDetailsToResponsePanDetails(pd),HttpStatus.OK)
+				:new ResponseEntity<>(ResponsePanDetails.builder().build(),HttpStatus.NO_CONTENT);
+
+	}
+	@RequestMapping(value="addAccount/{customerId}/{accountNumber}",method=RequestMethod.PUT)
+	void addAccount(@PathVariable Integer customerId,@PathVariable Integer accountNumber){
+		PanDetails pd=ps.findPanDetailsById(customerId);
+		pd.getAccounts().add(accountNumber);
+		ps.updatePanDetails(pd);
+	}
 	ResponsePanDetails getAccountByLogin(Integer customerId,String password){
 		PanDetails pd=ps.findPanDetailsById(customerId);
 		password=ps.getEncryptedPassword(password);
